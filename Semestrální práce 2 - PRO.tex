@@ -1,0 +1,71 @@
+\documentclass[12pt]{article}
+
+\usepackage [utf8]{inputenc}
+\usepackage [IL2]{fontenc}
+\usepackage [czech]{babel}
+\usepackage{graphicx}
+\usepackage{filecontents}
+\usepackage[numbib]{tocbibind}
+\graphicspath{{d:/zzz/}}
+
+\title{\includegraphics[width=10cm]{FAV_cmyk}
+
+{\huge Semestrální práce z KIV/PRO}
+
+\vspace{0.5cm}
+{\LARGE Plánování úloh}
+\vspace{1cm}
+}
+\author{Lukáš Runt (A20B0226P)}
+\date{\vspace{7.5cm} \today}
+
+\begin{document}
+
+\begin{filecontents}{Refetence.bib}
+@book{skiena1998algorithm,
+  title={The algorithm design manual},
+  author={Skiena, Steven S},
+  volume={2},
+  year={1998},
+  publisher={Springer}
+}
+\end{filecontents}
+
+\begin{titlepage}
+\clearpage\maketitle
+\thispagestyle{empty}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+\section{Zadání}
+Prostudujte pro zvolený problém existující metody řešení. Vyberte jednu z nich nebo navrhněte vlastní, implementujte a ověřte na experimentech. Postup a výsledky popište ve zprávě.
+\newline
+\newline Volba problému a metody: Můžete buď použít článek zpracovaný v práci 1 anebo si vybrat kterýkoliv z problémů popisovaných v kapitolách 13-18 knihy \cite{skiena1998algorithm} s výjimkou podkapitol 13.3, 13.6, 13.10, 14.1 až 14.5,  15.3, 15.4, z kapitoly 18 nejsou povolena témata týkající se textů a znakových řetězců, ale témata týkající se množin ano. Důvodem těchto omezení je nasměrovat vás přednostně k tématům, která se neprobírají ani na PRO ani na PT.
+
+\section{Úvod}
+Zjistěte jaký plán dokončí úlohu za nejmneší čas nebo nejméně procesů. 
+\newline \newline
+Plánování úkolů je důležitým aspektem pro všechny úlohy, kde dochází k paralelním procesům. Špatné plánování může zpozdit dokončení úlohy. Problémy ohledně plánování se typologicky dělí na problémy:
+\begin{itemize}
+  \item Topologické řazení
+  \item Biparitní plánování
+  \item Barvení vrcholů a hran
+  \item Plánování trasy obchodního cetujícího
+  \item Eulerovské cykly - sestrojení trasy, která projde všemi hranami 
+\end{itemize}
+V naší úloze se zaměříme na problémy s plánování s použití orientovaných acyklických grafů. Předpokládejme, že jsme práci rozdělili na velké množství menších úkolů. Pro každý úkol víme, jak dlouho bude trvat jeho vykonání. Dále víme zda je úkol nezbytný pro další úkoly (zda musí být jeden úkol vykonán dříve než druhý). Čím méně omezení budeme muset dodržet, tím lepší může být náš rozvrh. Tato omezení musí nadefinovat směr, aby byl graf acyklický. Cyklus by v našem případě znamenal situaci, která nelze nikdy vyřešit.
+\subsection{Kritická cesta}
+Mějme acyklický ohodnocený orientovaný graf  $\vec{G}$ s jedním vstupním a jedním výstupním vrcholem. Orientovaná cesta maximální vážené délky se nazývá kritická cesta grafu $\vec{G}$. 
+
+%Toto je důležité pro určení, k zjištění, jak zkrátit minimální celkovou dobu dokončení. Kritická cesta může být určena v čase O(n+m) pomocí dynamického programování.
+\subsection{Minimální doba dokončení}
+Minimální časové ohodnocení představuje minimální časy, v jichž je možno dosáhnout stavu popsaného daným vývojem. Minimální čas dokončení lze vypočítat v čase O(n+m). Doba dokončení je definována kritickou cetou. 
+\section{Existující metody}
+\section{Zvolené řešení}
+\section{Experimenty a výsledky}
+\section{Závěr}
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{Reference}
+\end{document}
