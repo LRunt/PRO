@@ -4,8 +4,9 @@
 \usepackage [IL2]{fontenc}
 \usepackage [czech]{babel}
 \usepackage{graphicx}
-\usepackage{filecontents}
 \usepackage[numbib]{tocbibind}
+\usepackage{hyperref}
+\usepackage{url}
 \graphicspath{{d:/zzz/}}
 
 \title{\includegraphics[width=10cm]{FAV_cmyk}
@@ -13,23 +14,13 @@
 {\huge Semestrální práce z KIV/PRO}
 
 \vspace{0.5cm}
-{\LARGE Plánování úloh}
+{\LARGE Eulerův cyklus (Problém čínského listonoše)}
 \vspace{1cm}
 }
 \author{Lukáš Runt (A20B0226P)}
 \date{\vspace{7.5cm} \today}
 
 \begin{document}
-
-\begin{filecontents}{Refetence.bib}
-@book{skiena1998algorithm,
-  title={The algorithm design manual},
-  author={Skiena, Steven S},
-  volume={2},
-  year={1998},
-  publisher={Springer}
-}
-\end{filecontents}
 
 \begin{titlepage}
 \clearpage\maketitle
@@ -39,33 +30,145 @@
 \tableofcontents
 \newpage
 \section{Zadání}
-Prostudujte pro zvolený problém existující metody řešení. Vyberte jednu z nich nebo navrhněte vlastní, implementujte a ověřte na experimentech. Postup a výsledky popište ve zprávě.
-\newline
-\newline Volba problému a metody: Můžete buď použít článek zpracovaný v práci 1 anebo si vybrat kterýkoliv z problémů popisovaných v kapitolách 13-18 knihy \cite{skiena1998algorithm} s výjimkou podkapitol 13.3, 13.6, 13.10, 14.1 až 14.5,  15.3, 15.4, z kapitoly 18 nejsou povolena témata týkající se textů a znakových řetězců, ale témata týkající se množin ano. Důvodem těchto omezení je nasměrovat vás přednostně k tématům, která se neprobírají ani na PRO ani na PT.
-
-\section{Úvod}
-Zjistěte jaký plán dokončí úlohu za nejmneší čas nebo nejméně procesů. 
-\newline \newline
-Plánování úkolů je důležitým aspektem pro všechny úlohy, kde dochází k paralelním procesům. Špatné plánování může zpozdit dokončení úlohy. Problémy ohledně plánování se typologicky dělí na problémy:
-\begin{itemize}
-  \item Topologické řazení
-  \item Biparitní plánování
-  \item Barvení vrcholů a hran
-  \item Plánování trasy obchodního cetujícího
-  \item Eulerovské cykly - sestrojení trasy, která projde všemi hranami 
-\end{itemize}
-V naší úloze se zaměříme na problémy s plánování s použití orientovaných acyklických grafů. Předpokládejme, že jsme práci rozdělili na velké množství menších úkolů. Pro každý úkol víme, jak dlouho bude trvat jeho vykonání. Dále víme zda je úkol nezbytný pro další úkoly (zda musí být jeden úkol vykonán dříve než druhý). Čím méně omezení budeme muset dodržet, tím lepší může být náš rozvrh. Tato omezení musí nadefinovat směr, aby byl graf acyklický. Cyklus by v našem případě znamenal situaci, která nelze nikdy vyřešit.
-\subsection{Kritická cesta}
-Mějme acyklický ohodnocený orientovaný graf  $\vec{G}$ s jedním vstupním a jedním výstupním vrcholem. Orientovaná cesta maximální vážené délky se nazývá kritická cesta grafu $\vec{G}$. 
-
-%Toto je důležité pro určení, k zjištění, jak zkrátit minimální celkovou dobu dokončení. Kritická cesta může být určena v čase O(n+m) pomocí dynamického programování.
-\subsection{Minimální doba dokončení}
-Minimální časové ohodnocení představuje minimální časy, v jichž je možno dosáhnout stavu popsaného daným vývojem. Minimální čas dokončení lze vypočítat v čase O(n+m). Doba dokončení je definována kritickou cetou. 
+Mějme mapu města a úkol, kde máme navrhnout trasy pro popelářské vozy, sněžné pluhy nebo poštáky, tak že budou projety všechny ulice města, přičemž je v našem zájmu, aby byly trasy minimální. Zároveň se musí začínat i končit ve stejném místě. Tyto problémy patří do skupiny problémů Eulerovského cyklu. Město si můžeme představit jako graf tak, že křižovatky budou vrcholy a ulice budou hrany, naším úkolem je najít v tomto grafu Eulerovský cyklus.
+\vspace{0.5cm}
+\newline\textbf{Vstup:} Graf $G = (V, E)$.
+\vspace{0.5cm}
+\newline\textbf{Výstup:} Nejkratší cyklus, který projde všemi vrcholy grafu $G$ nejméně jednou.
+\begin{center}
+	\includegraphics[width=10cm]{Listonoš}
+	\newline Obr 1: Příklad vstupu a výstupu. Zdroj: \cite{skiena1998algorithm}
+\end{center}
 \section{Existující metody}
-\section{Zvolené řešení}
+Před popisem existujících metod je dobré vysvětlit následující pojmy \cite{Fleury}:
+\begin{itemize}
+\item \textbf{Eulerovský tah} je cesta v grafu, která navštíví každou hranu právě jednou.
+\item \textbf{Eulerovský cyklus} je Eulerovský tah, který začíná a končí ve stejném vrcholu.
+\item \textbf{Most} je taková hrana, jejíž odstranění z grafu rozpojí graf na 2 spojité komponenty. Most nikdy nemůže být součástí cyklu.
+\end{itemize}
+\newpage Existují podmínky pro určení, zda graf obsahuje Eulerův cyklus nebo tah:
+
+\begin{itemize}
+  \item Neorientovaný graf obsahuje Eulerovský cyklus, jestliže je spojitý a každý vrchol má sudý stupeň.
+  \item Neorientovaný graf obsahuje Eulerovský tah, jetliže je spojitý a všechny vrcholy kromě dvou jsou sudého stupně. Tyto dva vrcholy budou počátečním a koncovým vrcholem cesty. 
+  \item Orientovaný graf obsahuje Eulerovský cyklus, pokud je silně spojitý a každý vrchol má stejný počet vstupních a výstupních hran.
+  \item Orientovaný graf obsahuje Eulerovský tah z $x$ do $y$, jestliže všechny ostatní vrcholy mají stejný počet vstupních a výstupních hran, přičemž $x$ a $y$ jsou vrcholy, které mají počet vstupních hran o jednu menší než počet výstupních hran (respektive o jednu vstupní hranu méně u $y$). Eulerovský tah pak vede z $x$ do $y$.
+\end{itemize}
+Pro nalezení Eulerovského cyklu v grafu musíme mít na vstupu graf, který Eulerovský cyklus obsahuje. Na vstupu by tedy měl být Eulerovský graf. Pokud graf Eulerovský není, musí se z původního graf upravit pomocí zdvojení některých hran (tzv. Eulerizace grafu, viz. 2.1), čímž se docílí, že graf bude Eulerovský.
+
+\subsection{Eulerizace grafu}
+\label{s:1}
+Graf lze Eulerizifikovat přidáním příslušných hran do grafu $G$ a to tak, aby byl graf souvislý (v případě orientovaného grafu silně souvislý) a graf obsahoval pouze vrcholy se sudým stupněm. Nejdříve tedy propojíme souvislé komponenty grafu a následně budeme přidávat nejkratší cesty mezi vrcholy s lichým stupněm, čímž se dané vrcholy stanou vrcholy stupně sudého a tím se graf $G$ přiblíží Eulerovskému grafu. Při řešení musíme zohlednit orientaci grafu, neboť u orientovaného musíme narozdíl od neorientovaného hlídat, aby vytvořená hrana vedla z vrcholu se zápornou $\delta$ do vrcholu s kladnou $\delta$. Pro nalezení nejkratší cesty mezi dvěma vrcholy lze použít Dijkstrův nebo Floyd-Warshallův algoritmus.
+\newpage 
+
+\noindent Pro určení Eulerovského cyklu jsou nejznámější algoritmy Fleuryho a Hierholzerův.
+\subsection{Fleuryho algoritmus}
+Fleuryho algoritmus \cite{stachnikproblem, Eulerian, Fleury} se používá pro nalezení Eulerovského cyklu nebo tahu ve spojitém grafu. Jedná se o celkem neefektivní algoritmus, který se většinou používá pro neorientované grafy. Na vstupu se očekává spojitý graf s žádnými nebo dvěma lichými vrcholy. Základní myšlenka algoritmu je taková, že most by měl být poslední hranou, kterou budeme procházet, neboť kdybychom jsme překročili most, aniž bychom navštívili všechny hrany v první složce, museli bychom se přes most vracet. 
+
+Ačkoliv je složitost procházení grafu $O(|E|)$, celý algoritmus zpomaluje složitost detekce mostů pomocí Trajanova algoritmu \cite{Tarjan}, která je $O(|E|^2)$, nebo alternativním dynamickým Thorupovo algoritmem \cite{Thorup} se složitostí \newline \noindent $O(|E| \cdot \log^3 |E| \cdot \log \log |E|)$. Oba algoritmy logicky vedou ke zhoršení celkové složitosti.
+
+\subsection{Hierholzerův algoritmus}
+Hierholzerův algoritmus \cite{Eulerian, Hierholzer} pro nalezení Eulerovského cyklu nebo tahu v grafu, který očekává na vstupu eulerovský graf. Většinou se používá pro orientované grafy. Základní myšlenkou je postupná konstrukce Eulerova cyklu spojováním disjunktivních kružnic. Jelikož algoritmus každou hranu projde pouze jednou, má algoritmus lineární složitost $O(|E|)$ .
+
+\section{Navržené a zvolené řešení}
+
+\subsection{Zvolená řešení}
+
+\subsubsection{Algoritmus určení a vytvoření Eulerovského cyklu}
+Jelikož víše zmíněné algoritmy potřebují na vstupu Eulerovský graf, budeme muset nejdříve určit zda graf obsahuje Eulerovský cyklus a následně neodpovídající grafy Eulerizifikovat \ref{s:1}. K určení, zda graf obsahuje Eulerovský cyklus, musíme zjistit, zda je graf souvislý, a to pomocí prohledávání do šířky nebo do hloubky. Následně se spočte počet lichých vrcholů. Jestliže mají všechny vrcholy sudý stupeň, graf obsahuje Eulerův cyklus a tím pádem máme i minimální délku, protože každá hrana je navštívena právě jednou. Avšak tato možnost, že vstupní data budou splňovat podmínky Eulerova cyklu, je velmi nepravděpodobná. Většina vstupních grafů se tedy Eulerizifikuje. 
+
+V rámci implementace jsem našel na internetu program \cite{Geeks} na určení, zda graf obsahuje Eulerovský cyklus, Eulerovský tah nebo není Eulerovský. Následně jsem naimplementoval vlastní algoritmus, s využitím Dijkstrova algoritmu, k přidání nejkratších cest, v případě, že graf není eulerovský.
+
+\subsubsection{Fleuryho algoritmus}
+Pro Fleuryho algoritmus jsem využil již připravený program z internetu \cite{Geeks2}. Algoritmus programu je následující:
+\begin{enumerate}
+\item Zjistíme, zda má graf 0 nebo 2 liché vrcholy.
+\item Vytvoříme kopii vstupního grafu, se kterou se bude pracovat.
+\item Zvolíme počáteční vrchol. Pokud má graf 0 lichých vrcholů, můžeme začít kdekoli. Pokod máme liché vrcholy 2, začneme u jednoho z nich. Počáteční vrchol nazveme $v$.
+\item Procházíme hrany grafu následujícím způsobem:
+	\begin{itemize}
+	\item Pokud nemá vrchol $v$ žádné sousedy, algoritmus končí.
+	\item Pokud má vrchol $v$ právě jednoho souseda $u$. Nastaví se $v$ na $u$ a hrana se odstraní.
+	\item Pokud má vrchol $v$ více než jednoho souseda vybírá se takový vrchol, který není mostem. Následně se nastaví $v$ na $u$ a hrana se odstraní.
+	\end{itemize}
+\end{enumerate}
+
+\subsubsection{Hierholzerův algoritmus}
+Hierholzerův algoritmus by měl být teoreticky efektivnější než Fleuryho. Základní myšlenkou je postupná konstrukce Eulerovského cyklu spojováním disjunktních kružnic. Postup algoritmu je následující:
+\begin{enumerate}
+\item Vybereme náhodný uzel, ve kterém budeme začínat.
+\item Vybíráme nenavštívené hrany k sousedním vrcholům dokud se nevrátíme zpátky do výchozího vrcholu. Tímto vytvoříme uzavřený sled. Pokud jsme prošli všechny hrany, našli jsme Eulerovský cyklus a algoritmus končí. Pokud ne pokračujeme krokem 3.
+\item Vybíráme vrcholy s nevštívenými hranami a nacházíme další uzavřené sledy, dokud nejsou navštíveny všechny hrany.
+\item Spojíme všechny uzavřené sledy dohromady.
+\end{enumerate}
+
+\subsection{Navržené řešení}
+
 \section{Experimenty a výsledky}
 \section{Závěr}
-\nocite{*}
-\bibliographystyle{plain}
-\bibliography{Reference}
+
+\begin{thebibliography}{9}
+
+\bibitem{skiena1998algorithm}
+		The algorithm design manual,
+		Skiena, Steven S,	
+		2,
+		1998,
+		Springer.
+\bibitem{Fleury}
+	     	Fleury's algorithm,
+	     	\url {https://slaystudy.com/fleurys-algorithm/}, 
+		SlayStudy, 
+		8, Sarthak Jain February, 
+		2020, 
+		Jul.
+\bibitem{stachnikproblem}
+		PROBLEM WYZNACZENIA CYKLU EULERA W GRAFIE NIESKIEROWANYM,
+		STACHNIK, Paulina and {\'S}LIWA, Micha{\l}.
+\bibitem{Eulerian}
+ 	  	 Eulerian path
+	  	 \url {https://en.wikipedia.org/wiki/Eulerian_path}, 
+	  	 Wikipedia,
+	  	 Wikimedia Foundation,
+	   	2021, 
+	   	Oct.
+\bibitem {Tarjan}
+		Tarjan's strongly connected components algorithm,
+		\url {https://en.wikipedia.org/wiki/Tarjan's_strongly_connected_components_algorithm},
+		Wikipedia,
+		Wikimedia Foundation,
+		2021,
+		Aug.
+\bibitem{Thorup}
+		Speeding up dynamic shortest path algorithms,
+ 		Buriol, Luciana S and Resende, Mauricio GC and Thorup, Mikkel,
+		Rapport technique TD-5RJ8B, AT\&T Labs Research,
+  		41,
+  		2003,
+  		Citeseer.
+\bibitem{Hierholzer}
+		Hierholzer's Algorithm,
+		\url {https://slaystudy.com/hierholzers-algorithm/},
+ 		SlayStudy,
+		12, Nurgazy Nazhimidinov,
+		July, 
+		2021, 
+		Mar.
+\bibitem{Geeks}
+		geeksforgeeks2021,
+ 		Eulerian path and circuit for undirected graph,
+		\url {https://www.geeksforgeeks.org/eulerian-path-and-circuit/?ref=lbp}, 
+		GeeksforGeeks, 
+		2021,	
+		Aug.
+\bibitem{Geeks2}
+		geeksforgeeks2021,
+		Fleury's Algorithm for printing Eulerian Path or Circuit, 
+		\url {https://www.geeksforgeeks.org/fleurys-algorithm-for-printing-eulerian-path/?ref=lbp}, 
+		GeeksforGeeks,
+		2021, 
+		Sep.
+
+ \end{thebibliography}
+
 \end{document}
