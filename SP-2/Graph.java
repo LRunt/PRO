@@ -22,9 +22,9 @@ public class Graph{
 	/** pocet vrcholu */ 
 	private int vertexCount;
 	/*List hra grafu*/
-    private List<Hrana> adj[];
+    public List<Edge> adj[];
     /** clone grafu (aby se nezmìnil pùvodní graf)*/
-    private List<Hrana> clone[];
+    private List<Edge> clone[];
 	 
 	/**
 	 * Konstruktor grafu
@@ -41,7 +41,7 @@ public class Graph{
 	private void initGraph() {
 		adj = new ArrayList[vertexCount];
         for (int i = 0; i < vertexCount; i++) {
-            adj[i] = new ArrayList<Hrana>();
+            adj[i] = new ArrayList<Edge>();
         }
 	}
 	
@@ -51,11 +51,15 @@ public class Graph{
 	 * @param w id vrcholu
 	 */
     public void addEdge(int v, int w, int weight){
-        adj[v].add(new Hrana(w, weight));// Add w to v's list.
-        adj[w].add(new Hrana(v, weight)); //The graph is undirected
+        adj[v].add(new Edge(w, weight));// Add w to v's list.
+        adj[w].add(new Edge(v, weight)); //The graph is undirected
     }
     
-    // This function removes edge u-v from graph.
+    /**
+     * Odstraneni hrany
+     * @param u id vrcholu
+     * @param v id vrcholu
+     */
     public void removeEdge(int u, int v)
     {
     	adj[u] = Stream.concat(
@@ -112,49 +116,61 @@ public class Graph{
         visited[v] = true;
  
         // Rekurzivni prochazeni
-        Iterator<Hrana> i = adj[v].listIterator();
+        Iterator<Edge> i = adj[v].listIterator();
         while (i.hasNext())
         {
-            Hrana n = i.next();
+            Edge n = i.next();
             if (!visited[n.vertex])
                 DFSUtil(n.vertex, visited);
         }
     }
     
-    /* The function returns one of the following values
-    0 --> If graph is not Eulerian
-    1 --> If graph has an Euler path (Semi-Eulerian)
-    2 --> If graph has an Euler Circuit (Eulerian)  */
+    /**
+    * The function returns one of the following values
+    * 0 --> Graf neni Eulerovsky
+    * 1 --> Eulerovsky tah
+    * 2 --> Eulerovsky cyklus  
+    */
     int isEulerian(){
-    	// Check if all non-zero degree vertices are connected
+    	// Vyzkouseni, zda jsou vsechny nenulove vrcholy propojeny
     	if (isConnected() == false)
     		return 0;
 
-    	// Count vertices with odd degree
+    	// Spocitani lichych vrcholu
     	int odd = 0;
     	for (int i = 0; i < vertexCount; i++)
     		if (adj[i].size()%2!=0)
     			odd++;
 
-    	// If count is more than 2, then graph is not Eulerian
+    	// Kdyz je vice, jak 2 vrcholy liche graf neni Eulerovsky
     	if (odd > 2)
     		return 0;
 
-    	// If odd count is 2, then semi-eulerian.
-    	// If odd count is 0, then eulerian
-    	// Note that odd count can never be 1 for undirected graph
+    	// Kdyz je pocet lichych vrcholu = 2, jedna se o Eulerovsky tah.
+    	// Kdyz je pocet lichych vrcholu = 0, jedna se o Eulerovsky cyklus
+    	// Pocet lichych vrcholu pro neorientovany graf
     	return (odd==2)? 1 : 2;
     }
 
-    // Function to run test cases
+    /**
+     * Metoda testuje pripad grafu
+     * @return typ grafu
+     */
     boolean test(){
     	int res = isEulerian();
     	if (res == 0) {
     		System.out.println("Graf neni Eulerovsky");
+    		System.out.println("Budou pridany hrany");
+    		makeEuler();
+    		test();
     		return false;
          	}
-    	else if (res == 1)
+    	else if (res == 1) {
     		System.out.println("Graf obsahuje Eulerovsky tah");
+    		System.out.println("Budou pridany hrany");
+    		makeEuler();
+    		test();
+    	}	
     	else
     		System.out.println("Graf obsahuje Eulerovsky cyklus");
     	return true;
@@ -173,7 +189,7 @@ public class Graph{
     		if(adj[i].size() % 2 != 0) {
     			oddVertex.add(i);
     		}
-    		System.out.printf("Vrchol %d stupen: %d\n",i, adj[i].size());
+    		//System.out.printf("Vrchol %d stupen: %d\n",i, adj[i].size());
     	}
 	 
     	while(oddVertex.size() != 0) {
@@ -211,9 +227,9 @@ public class Graph{
  
     /**
      * Dijkstruv algorimus na hledani nejkratsi cesty
-     * @param start 
-     * @param end
-     * @return
+     * @param start startovni vrchol
+     * @param end koncovy vrchol
+     * @return nejkratsi ceta
      */
     public int dijkstra(int start, int end, List path, List edgeWeight) {
     	int[] distance = fieldInit(Integer.MAX_VALUE);
@@ -256,12 +272,14 @@ public class Graph{
 			current = predecessor[current]; 
 		}
 		path.add(current);
-	 
+		
+		//vypis pri testovani spravne funkcnosti metody
+		/*
 		path.stream().forEach(a -> System.out.print(a + " "));
 		System.out.println();
 		edgeWeight.stream().forEach(a -> System.out.print(a + " "));
 		System.out.println();
-	 
+	 	*/
 		return distance[end];
     }
  
@@ -283,18 +301,26 @@ public class Graph{
     //-----------------------------------------------------------------------------------------------------------------------------
     //Fleuryho algoritmus
     //-----------------------------------------------------------------------------------------------------------------------------
+    /**
+     * Metoda startuje Fleuriho algoritmus
+     * @throws CloneNotSupportedException
+     */
     public void startEulerTour() throws CloneNotSupportedException {
-    	clone = adj.clone();
-    	printEulerTour();
-    	adj = clone.clone();
+    	try{
+    		clone = adj.clone();
+    		printEulerTour();
+    		adj = clone.clone();
+    	} catch(StackOverflowError er) {
+    		System.out.println("Doslo k preteceni zasobniku!");
+    	}
+    	
     }
     
-    /* The main function that print Eulerian Trail.
-    It first finds an odd degree vertex (if there
-    is any) and then calls printEulerUtil() to
-    print the path */
+    /**
+     * Matoda vypisuje Eulerovsky cylkus
+     */
     public void printEulerTour() {
-    	// Find a vertex with odd degree
+    	// Najdi vrchol s lichym stupnem
     	Integer u = 0;
     	for (int i = 0; i < vertexCount; i++) {
     		if (adj[i].size() % 2 == 1) {
@@ -303,7 +329,7 @@ public class Graph{
     		}
     	}
 
-    	// Print tour starting from oddv
+    	// Vypis cesty, zacinaje lichym vrcholem
     	List<Integer> cesta = new ArrayList<>();
     	cesta.add(u);
     	printEulerUtil(u, cesta);
@@ -314,7 +340,11 @@ public class Graph{
     	System.out.println();
     }
     
-    // Print Euler tour starting from vertex u
+    /**
+     * Vypis Eulerovskeho cyklu
+     * @param u vrchol od ktereho se zacina
+     * @param cesta cesta Eulerovskeho cyklu
+     */
     private void printEulerUtil(Integer u, List<Integer> cesta){
     	// Recur for all the vertices adjacent to this
     	// vertex
@@ -370,7 +400,7 @@ public class Graph{
     	isVisited[v] = true;
     	int count = 1;
     	// Recur for all vertices adjacent to this vertex
-    	for (Hrana adj : adj[v]) {
+    	for (Edge adj : adj[v]) {
     		if (!isVisited[adj.vertex]) {
     			count = count + dfsCount(adj.vertex, isVisited);
     		}
@@ -380,65 +410,71 @@ public class Graph{
     //-----------------------------------------------------------------------------------------------------------------------------
     //Hierholzeruv algoritmus
     //-----------------------------------------------------------------------------------------------------------------------------
+    /**
+     * Spousti Hierholzeruv algoritmus
+     */
     public void startHierholzer() {
     	printEulerianCircuit(adj.clone());
     }
     
-    private void printEulerianCircuit(List<Hrana> adj[]){
-      // adj represents the adjacency list of
-      // the directed graph
-      // edge represents the number of edges emerging from a vertex
-      
+    /**
+     * Hierholzeruv algoritmus
+     * @param adj clon grafu
+     */
+    private void printEulerianCircuit(List<Edge> adj[]){
+
+      // edge reprezentuje pocet dostupnych hran z vrcholu
       Map<Integer,Integer> edges = new HashMap<Integer,Integer>();
     
-      for (int i=0; i<adj.length ; i++)
-      {
-          //find the count of edges to keep track of unused edges
+      //Pocitani poctu hran pro kazdy vrchol
+      for (int i=0; i<adj.length ; i++){
           edges.put(i,adj[i].size());
       }
       
-      // Maintain a stack to keep vertices
+      // Vytvoreni zasobniku do ktereho budeme ukladat vrcholy
       Stack<Integer> curr_path = new Stack<Integer>();
     
-      // vector to store final circuit
+      // Pole k ulozeni finalni posloupnosti
       List<Integer> circuit = new ArrayList<Integer>();
     
-      // We start from vertex 0
+      // Start ve vrcholu 0
       curr_path.push(0);
       
-      // Current vertex
+      // Aktualne zpracovavany vrchol
       int curr_v = 0;
     
       while (!curr_path.empty()) {
-          // If there's remaining edge
+          // Kdyz je jese zbyva nejaka hrana
           if (edges.get(curr_v)>0) {
-              // Push the vertex visited.
+              // Vloz do zasobniku navstiveny vrchol
               curr_path.push(adj[curr_v].get(edges.get(curr_v) - 1).vertex);
     
-              // and remove that edge or decrement the edge count.
+              // Odstraneni z hash mapy a snizeni poctu hran
               edges.put(curr_v, edges.get(curr_v) - 1);
               int prevous_vertex = curr_v;
-              // Move to next vertex
+              // Presunuti k nasledujicimu vrcholu
               curr_v = curr_path.peek();
               
-              adj[curr_v] = Stream.concat(
+             /* if(edges.get(curr_v)>0) {
+            	  adj[curr_v] = Stream.concat(
                       adj[curr_v].stream().filter(a -> a.vertex != prevous_vertex),
                       adj[curr_v].stream().filter(a -> a.vertex == prevous_vertex).skip(1))
                   .collect(Collectors.toList());
-              edges.put(curr_v, edges.get(curr_v) - 1);
+            	  edges.put(curr_v, edges.get(curr_v) - 1);
+              }*/
+              
           }
     
-          // back-track to find remaining circuit
+          // back-tracking k nalezeni zbyvajicich vrcholu
           else{
           circuit.add(curr_path.pop());
           if(!curr_path.empty()) {
         	 curr_v = curr_path.peek();
           }
-         
           }
       }
     
-      // After getting the circuit, now print it in reverse
+      //Vypis Eulerovskeho cyklu
       for (int i=circuit.size()-1; i>=0; i--)
       {
           System.out.print(circuit.get(i));
@@ -449,7 +485,7 @@ public class Graph{
       System.out.println();
     }
     //-----------------------------------------------------------------------------------------------------------------------------
-    // Runtuv algoritmus (muj vlastni) - na zaklade backtrackingu
+    // Vlastni algoritmus - na zaklade backtrackingu
     //-----------------------------------------------------------------------------------------------------------------------------
     /**
      * Metoda spusti algoritmus pomoci klonu grafu
@@ -463,13 +499,14 @@ public class Graph{
      * Princip na bazi back-trackingu
      * @param adj clone pole
      */
-    public void myAlgorithm(List<Hrana> adj[]) {
+    public void myAlgorithm(List<Edge> adj[]) {
     	//pocet hran v grafu
     	int numberOfEdges = 0;
     	//pocet navstivenych hran
     	int edgesVisited = 0;
     	//zasobnik do ktereho se bude ukladat cesta
     	Stack<Integer> path = new Stack<>();
+    	Stack<Integer> visit = new Stack<>();
     	
     	//Spocitani hran
     	for(int i = 0; i < adj.length; i++) {
@@ -481,33 +518,36 @@ public class Graph{
     	numberOfEdges = numberOfEdges/2;
     	
     	int currentVex = 0;
-    	int[] numberOfVisit = new int[vertexCount];
+    	//int[] numberOfVisit = new int[vertexCount];
+    	int numberOfVisit = 0;
     	//museime projit vsechny hrany
     	while(numberOfEdges > edgesVisited) {
+    		//System.out.println(edgesVisited);
     		//pokud vrcholu zbyvaji hrany
-    		while(adj[currentVex].size() > numberOfVisit[currentVex]) {
+    		while(adj[currentVex].size() > numberOfVisit) {
     			//otestovani jestli byla hrana pouzita
-    			if(!adj[currentVex].get(numberOfVisit[currentVex]).visited) {
-    				adj[currentVex].get(numberOfVisit[currentVex]).visited = true;
-    				numberOfVisit[currentVex]++;
+    			if(!adj[currentVex].get(numberOfVisit).visited) {
+    				adj[currentVex].get(numberOfVisit).visited = true;
     				path.add(currentVex);
-    				currentVex = adj[currentVex].get(numberOfVisit[currentVex] - 1).vertex;
+    				currentVex = adj[currentVex].get(numberOfVisit).vertex;
     				adj[currentVex].stream().filter(e -> e.vertex == path.peek()).filter(e -> e.visited == false).findFirst().get().visited = true;
     				edgesVisited++;
-    				numberOfVisit[currentVex] = 0;
+    				visit.push(numberOfVisit);
+    				numberOfVisit = 0;
     				break;
     			//pokud byla zkusime dalsi hranu v poradi
     			}else {
-    				numberOfVisit[currentVex]++;
+    				numberOfVisit++;
     			}
     		}
     		//pokud nezbyva zadna hrana musime se vrati do predchoziho vrcholu a zkusit jinou hranu
-    		if(adj[currentVex].size() == numberOfVisit[currentVex]) {
+    		if(adj[currentVex].size() == numberOfVisit) {
     			int placeholder = currentVex;
     			adj[path.peek()].stream().filter(e -> e.vertex == placeholder).filter(e -> e.visited == true).findFirst().get().visited = false;
     			adj[currentVex].stream().filter(e -> e.vertex == path.peek()).filter(e -> e.visited == true).findFirst().get().visited = false;
-    			numberOfVisit[currentVex]--;
     			currentVex = path.pop();
+    			numberOfVisit = visit.pop();
+    			numberOfVisit++;
     			edgesVisited--;
     		}
     	}
@@ -524,5 +564,11 @@ public class Graph{
     	System.out.println();
     }
     
+    
+    public void reset() {
+    	for(int i = 0; i < adj.length; i++) {
+    		adj[i].stream().forEach(e -> e.visited = false);
+    	}
+    }
     
 }
