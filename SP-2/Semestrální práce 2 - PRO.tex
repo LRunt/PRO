@@ -37,7 +37,7 @@
 \tableofcontents
 \newpage
 \section{Zadání}
-Mějme mapu města a úkol, kde máme navrhnout trasy pro popelářské vozy, sněžné pluhy nebo poštáky, tak že budou projety všechny ulice města, přičemž je v našem zájmu, aby byly trasy minimální. Zároveň se musí začínat i končit ve stejném místě. Tyto problémy patří do skupiny problémů Eulerovského cyklu. Město si můžeme představit jako graf tak, že křižovatky budou vrcholy a ulice budou hrany, naším úkolem je najít v tomto grafu Eulerovský cyklus.
+Mějme mapu města a úkol, kde máme navrhnout trasy pro popelářské vozy, sněžné pluhy nebo pošťáky tak, že budou projety všechny ulice města, přičemž je v našem zájmu, aby byly trasy minimální. Zároveň se musí začínat i končit ve stejném místě. Tyto problémy patří do skupiny problémů Eulerovského cyklu. Město si můžeme představit jako graf tak, že křižovatky budou vrcholy a ulice budou hrany, naším úkolem je najít v tomto grafu Eulerovský cyklus.
 \vspace{0.5cm}
 \newline\textbf{Vstup:} Graf $G = (V, E)$.
 \vspace{0.5cm}
@@ -57,7 +57,7 @@ Před popisem existujících metod je dobré vysvětlit následující pojmy \ci
 
 \begin{itemize}
   \item Neorientovaný graf obsahuje Eulerovský cyklus, jestliže je spojitý a každý vrchol má sudý stupeň.
-  \item Neorientovaný graf obsahuje Eulerovský tah, jetliže je spojitý a všechny vrcholy kromě dvou jsou sudého stupně. Tyto dva vrcholy budou počátečním a koncovým vrcholem cesty. 
+  \item Neorientovaný graf obsahuje Eulerovský tah, jestliže je spojitý a všechny vrcholy kromě dvou jsou sudého stupně. Tyto dva vrcholy budou počátečním a koncovým vrcholem cesty. 
   \item Orientovaný graf obsahuje Eulerovský cyklus, pokud je silně spojitý a každý vrchol má stejný počet vstupních a výstupních hran.
   \item Orientovaný graf obsahuje Eulerovský tah z $x$ do $y$, jestliže všechny ostatní vrcholy mají stejný počet vstupních a výstupních hran, přičemž $x$ a $y$ jsou vrcholy, které mají počet vstupních hran o jednu menší než počet výstupních hran (respektive o jednu vstupní hranu méně u $y$). Eulerovský tah pak vede z $x$ do $y$.
 \end{itemize}
@@ -65,7 +65,7 @@ Pro nalezení Eulerovského cyklu v grafu musíme mít na vstupu graf, který Eu
 
 \subsection{Eulerizace grafu}
 \label{s:1}
-Graf lze Eulerizifikovat přidáním příslušných hran do grafu $G$ a to tak, aby byl graf souvislý (v případě orientovaného grafu silně souvislý) a graf obsahoval pouze vrcholy se sudým stupněm. Nejdříve tedy propojíme souvislé komponenty grafu a následně budeme přidávat nejkratší cesty mezi vrcholy s lichým stupněm, čímž se dané vrcholy stanou vrcholy stupně sudého a tím se graf $G$ přiblíží Eulerovskému grafu. Při řešení musíme zohlednit orientaci grafu, neboť u orientovaného musíme narozdíl od neorientovaného hlídat, aby vytvořená hrana vedla z vrcholu se zápornou $\delta$ do vrcholu s kladnou $\delta$. Pro nalezení nejkratší cesty mezi dvěma vrcholy lze použít Dijkstrův nebo Floyd-Warshallův algoritmus.
+Graf lze Eulerizifikovat přidáním příslušných hran do grafu $G$ a to tak, aby byl graf souvislý (v případě orientovaného grafu silně souvislý) a graf obsahoval pouze vrcholy se sudým stupněm. Nejdříve tedy propojíme souvislé komponenty grafu a následně budeme přidávat nejkratší cesty mezi vrcholy s lichým stupněm, čímž se dané vrcholy stanou vrcholy stupně sudého a tím se graf $G$ přiblíží Eulerovskému grafu. Při řešení musíme zohlednit orientaci grafu, neboť u orientovaného musíme na rozdíl od neorientovaného hlídat, aby vytvořená hrana vedla z vrcholu se zápornou $\delta$ do vrcholu s kladnou $\delta$. Pro nalezení nejkratší cesty mezi dvěma vrcholy lze použít Dijkstrův nebo Floyd-Warshallův algoritmus.
 \newpage 
 
 \noindent Pro určení Eulerovského cyklu jsou nejznámější algoritmy Fleuryho a Hierholzerův.
@@ -75,23 +75,23 @@ Fleuryho algoritmus \cite{stachnikproblem, Eulerian, Fleury} se používá pro n
 Ačkoliv je složitost procházení grafu $O(|E|)$, celý algoritmus zpomaluje složitost detekce mostů pomocí Trajanova algoritmu \cite{Tarjan}, která je $O(|E|^2)$, nebo alternativním dynamickým Thorupovo algoritmem \cite{Thorup} se složitostí \newline \noindent $O(|E| \cdot \log^3 |E| \cdot \log \log |E|)$. Oba algoritmy logicky vedou ke zhoršení celkové složitosti.
 
 \subsection{Hierholzerův algoritmus}
-Hierholzerův algoritmus \cite{Eulerian, Hierholzer} pro nalezení Eulerovského cyklu nebo tahu v grafu, který očekává na vstupu eulerovský graf. Většinou se používá pro orientované grafy. Základní myšlenkou je postupná konstrukce Eulerova cyklu spojováním disjunktivních kružnic. Jelikož algoritmus každou hranu projde pouze jednou, má algoritmus lineární složitost $O(|E|)$ .
+Hierholzerův algoritmus \cite{Eulerian, Hierholzer} pro nalezení Eulerovského cyklu nebo tahu v grafu, který očekává na vstupu eulerovský graf. Většinou se používá pro orientované grafy. Základní myšlenkou je postupná konstrukce Eulerova cyklu spojováním disjunktivních kružnic. Jelikož algoritmus každou hranu projde pouze jednou, má algoritmus lineární složitost $O(|E|)$.
 
 \section{Navržené a zvolené řešení}
 \label{s:2}
 \subsection{Zvolená řešení}
 
 \subsubsection{Algoritmus určení a vytvoření Eulerovského cyklu}
-Jelikož víše zmíněné algoritmy potřebují na vstupu Eulerovský graf, budeme muset nejdříve určit zda graf obsahuje Eulerovský cyklus a následně neodpovídající grafy Eulerizifikovat \ref{s:1}. K určení, zda graf obsahuje Eulerovský cyklus, musíme zjistit, zda je graf souvislý, a to pomocí prohledávání do šířky nebo do hloubky. Následně se spočte počet lichých vrcholů. Jestliže mají všechny vrcholy sudý stupeň, graf obsahuje Eulerův cyklus a tím pádem máme i minimální délku, protože každá hrana je navštívena právě jednou. Avšak tato možnost, že vstupní data budou splňovat podmínky Eulerova cyklu, je velmi nepravděpodobná. Většina vstupních grafů se tedy Eulerizifikuje. 
+Jelikož výše zmíněné algoritmy potřebují na vstupu Eulerovský graf, budeme muset nejdříve určit zda graf obsahuje Eulerovský cyklus a následně neodpovídající grafy Eulerizifikovat \ref{s:1}. K určení, zda graf obsahuje Eulerovský cyklus, musíme zjistit, zda je graf souvislý, a to pomocí prohledávání do šířky nebo do hloubky. Následně se spočte počet lichých vrcholů. Jestliže mají všechny vrcholy sudý stupeň, graf obsahuje Eulerův cyklus a tím pádem máme i minimální délku, protože každá hrana je navštívena právě jednou. Avšak tato možnost, že vstupní data budou splňovat podmínky Eulerova cyklu, je velmi nepravděpodobná. Většina vstupních grafů se tedy Eulerizifikuje. 
 
-V rámci implementace jsem našel na internetu program \cite{Geeks} na určení, zda graf obsahuje Eulerovský cyklus, Eulerovský tah nebo není Eulerovský. Následně jsem naimplementoval vlastní algoritmus, s využitím Dijkstrova algoritmu, k přidání nejkratších cest, v případě, že graf není eulerovský.
+V rámci implementace jsem našel na internetu program \cite{Geeks} na určení, zda graf obsahuje Eulerovský cyklus, Eulerovský tah nebo není Eulerovský. Následně jsem naimplementoval vlastní algoritmus, s využitím Dijkstrova algoritmu, k přidání nejkratších cest, v případě, že graf není Eulerovský.
 
 \subsubsection{Fleuryho algoritmus}
 Pro Fleuryho algoritmus jsem využil již připravený program z internetu \cite{Geeks2}. Algoritmus programu je následující:
 \begin{enumerate}
 \item Zjistíme, zda má graf 0 nebo 2 liché vrcholy.
 \item Vytvoříme kopii vstupního grafu, se kterou se bude pracovat.
-\item Zvolíme počáteční vrchol. Pokud má graf 0 lichých vrcholů, můžeme začít kdekoli. Pokod máme liché vrcholy 2, začneme u jednoho z nich. Počáteční vrchol nazveme $v$.
+\item Zvolíme počáteční vrchol. Pokud má graf 0 lichých vrcholů, můžeme začít kdekoli. Pokud máme liché vrcholy 2, začneme u jednoho z nich. Počáteční vrchol nazveme $v$.
 \item Procházíme hrany grafu následujícím způsobem:
 	\begin{itemize}
 	\item Pokud nemá vrchol $v$ žádné sousedy, algoritmus končí.
@@ -105,12 +105,12 @@ Hierholzerův algoritmus jsem též našel na internetu \cite{Java} , avšak alg
 \begin{enumerate}
 \item Vybereme náhodný uzel, ve kterém budeme začínat.
 \item Vybíráme nenavštívené hrany k sousedním vrcholům dokud se nevrátíme zpátky do výchozího vrcholu. Tímto vytvoříme uzavřený sled. Pokud jsme prošli všechny hrany, našli jsme Eulerovský cyklus a algoritmus končí. Pokud ne pokračujeme krokem 3.
-\item Vybíráme vrcholy s nevštívenými hranami a nacházíme další uzavřené sledy, dokud nejsou navštíveny všechny hrany.
+\item Vybíráme vrcholy s nenavštívenými hranami a nacházíme další uzavřené sledy, dokud nejsou navštíveny všechny hrany.
 \item Spojíme všechny uzavřené sledy dohromady.
 \end{enumerate}
 
 \subsection{Navržené řešení}
-Rozhodl jsem se vytvořit vlastní řešení problému. Napadlo mě využít back-tacking a to tak, že budu brát hrany grafu, které si zároveň budu označovat jako navštívené. Pokud se dostanu do vrcholu, ve kterém jsou všechny hrany navštívené, vrátím se o krok zpět a zkusím vzít jinou hranu.
+Rozhodl jsem se vytvořit vlastní řešení problému. Napadlo mě využít back-tracking a to tak, že budu brát hrany grafu, které si zároveň budu označovat jako navštívené. Pokud se dostanu do vrcholu, ve kterém jsou všechny hrany navštívené, vrátím se o krok zpět a zkusím vzít jinou hranu.
 \begin{algorithm}
 \caption{My algorithm}\label{euclid}
 \begin{algorithmic} [1]
@@ -136,12 +136,12 @@ Rozhodl jsem se vytvořit vlastní řešení problému. Napadlo mě využít bac
 \end{algorithmic}
 \end{algorithm}
 
-Jedná se o celkem hloupý algoritmus (brute-force), kde záleží jaké štěstí budeme mít při vybírání hran. U této metody bude složitost v nejlepším případě $O(|E|)$ a to právě, když se nikdy nebudeme vracet. Bohužel v nejhorším případě se dosahuje složitosti až $O(|E!|)$ a to, když bude potřba vyzkoušet všechny možné kombinace, než se dojde ke správnému výsledku.
+Jedná se o celkem hloupý algoritmus (brute-force), kde záleží jaké štěstí budeme mít při vybírání hran. U této metody bude složitost v nejlepším případě $O(|E|)$ a to právě, když se nikdy nebudeme vracet. Bohužel v nejhorším případě se dosahuje složitosti až $O(|E!|)$ a to, když bude potřeba vyzkoušet všechny možné kombinace, než se dojde ke správnému výsledku.
 
 \section{Experimenty a výsledky}
 Pro experimenty jsem si vytvořil program, kam se pokusil implementovat a zkopírovat všechny metody z \ref{s:2}. Výsledný program je dostupný na mém GitHubu \cite{ReseniMoje}.
 
-Aby byly experimenty co nejvíce vypovídající, vytvořil jsem si metody na generování a načítání dat . Pro testování jsem volil různě veliké grafy s různou hustotou hran. Narazil jsem, zde na problém implementace Hierholzerova algoritmu, neboť je to primárně algoritmus pro orientované grafy. V testovaném programu jsem nechal variantu pro orientovaný graf (neorientovaná verze nefungovala), a tak Hierholzerův algoritmus prochází 2x více hran než ostatní algoritmy a teoreticky by měli být všechny naměřené časy tohoto algoritmu poloviční. Dále jsem se setkal s problémem přetečení zásobníku u testování větších grafů s velkým počtem hran u Fleuryho algoritmu. Výsledky měření můžeme nalézt v tabulce \ref{Tabulka}.
+Aby byly experimenty co nejvíce vypovídající, vytvořil jsem si metody na generování a načítání dat. Pro testování jsem volil různě veliké grafy s různou hustotou hran. Narazil jsem, zde na problém implementace Hierholzerova algoritmu, neboť je to primárně algoritmus pro orientované grafy. V testovaném programu jsem nechal variantu pro orientovaný graf (neorientovaná verze nefungovala), a tak Hierholzerův algoritmus prochází 2x více hran než ostatní algoritmy a teoreticky by měli být všechny naměřené časy tohoto algoritmu poloviční. Dále jsem se setkal s problémem přetečení zásobníku u testování větších grafů s velkým počtem hran u Fleuryho algoritmu. Výsledky měření můžeme nalézt v tabulce \ref{Tabulka}.
 
 \begin{table}[h]
 \label{Tabulka}
@@ -163,12 +163,12 @@ Počet vrcholů & Počet hran & Fleury & Hierholzer & Vlastní \\ \hline
 \end{tabular}
 \end{table}
 
-Pro zjištění, který graf je efektivní ve kterém typu grafu jsem vygeneroval 3 grafy s 50 vrcholy. První graf se 49 vrcholy představuje jednu cestu z vrcholu 1 do vrcholu 49 (algoritmus se následně musí vrátit do počátečního bodu). Druhý graf předstvuje kružnici, tedy oproti předchozímu grafu má navíc hranu mezi vrcholem 1 a 49. Poslední graf má pak hrany mezi všemi vrcholy.
+Pro zjištění, který graf je efektivní ve kterém typu grafu jsem vygeneroval 3 grafy s 50 vrcholy. První graf se 49 hranami představuje jednu cestu z vrcholu 1 do vrcholu 49 (algoritmus se následně musí vrátit do počátečního bodu). Druhý graf představuje kružnici, tedy oproti předchozímu grafu má navíc hranu mezi vrcholem 1 a 49. Poslední graf má pak hrany mezi všemi vrcholy. Z naměřených dat vyplývá, že pro první typ grafu (cesta z bodu A do bodu B bez odboček) je překvapivě nejefektivnejší Fleuryho algoritmus s podobným časem jako Hierholzerův algorimus. Vlastní algoritmus byl u prvního grafu poznatelně pomalejší. U obou zbývajících grafů byl pak Fleuryho algoritmus nejméně efektivní, zatímco ostatní algoritmy (Hierholzerův, vlastní) zabraly skoro stejný čas.
 
-Naměřené výsledky vycházejí podle předpokladů. Dokázalo se, že Fleuryho algorimus je celkem neefetivní, díky složitému hledání mostů. U větších dat navíc kvůli rekurzi v metodě prohledávání do hloubky, přetéká zásobník. Můj vlastní algoritmus mě celkem překvapil, že je ve většině případů stejně rychlý, ne-li rychlejší než Hierholzerův, což je nejspíše způsobeno procházením dvojnásobného počtu hran, kvůli používání orientovaného grafu v Hierholzerově metodě. Také se prokázalo, že vlastní algoritmus není spolehlivý a záleží na náhodě jak se vybírají hrany. U grafu s 450 vrcholy a 17425 hranami, se začala vybírat úplně špatná cesta, což zapříčinolo dlouhou dobu trvání programu. Za nejsplehlivější bych jsem označil Hierholzerův algoritmus, který měl čas úměrný k počtu vrcholu a hran.
+Naměřené výsledky vycházejí podle předpokladů. Dokázalo se, že Fleuryho algoritmus je celkem neefektivní, díky složitému hledání mostů. U větších dat navíc kvůli rekurzi v metodě prohledávání do hloubky, přetéká zásobník. Můj vlastní algoritmus mě celkem překvapil, že je ve většině případů stejně rychlý, ne-li rychlejší než Hierholzerův, což je nejspíše způsobeno procházením dvojnásobného počtu hran, kvůli používání orientovaného grafu v Hierholzerově metodě. Také se prokázalo, že vlastní algoritmus není spolehlivý a záleží na náhodě jak se vybírají hrany. U grafu s 450 vrcholy a 17425 hranami, se začala vybírat úplně špatná cesta, což zapříčinilo dlouhou dobu trvání programu. Za nejspolehlivější bych jsem označil Hierholzerův algoritmus, který měl čas úměrný k počtu vrcholu a hran.
  
 \section{Závěr}
-Ohledně problému jsem si zjsitil informace a našel existující implementace problému čínského pošťáka, zároveň jsem se pokusil vymyslet svůj algoritmus. V rámci experimentů byl vytvořen jednochý program, do kterého se implemetovaly 3 metody na řešení daného problému. Z experimentů vyplynulo, že nejrychleší a nejspolehlivější je Hierholzerův algoritmus. Vlastní algoritmus funguje povětšinou dobře srovnatelně s Hierholzerův, avšak pro některá data trvá nesmírně dlouho. Fleuryho se prokázal jako celkem neefektivní algoritmus. 
+Ohledně problému jsem si zjistil informace a našel existující implementace problému čínského pošťáka, zároveň jsem se pokusil vymyslet svůj algoritmus. V rámci experimentů byl vytvořen jednoduchý program, do kterého se implementovaly 3 metody na řešení daného problému. Z experimentů vyplynulo, že nejrychlejší a nejspolehlivější je Hierholzerův algoritmus. Vlastní algoritmus funguje povětšinou dobře srovnatelně s Hierholzerův, avšak pro některá data trvá nesmírně dlouho. Fleuryho se prokázal jako celkem neefektivní algoritmus. 
 
 \begin{thebibliography}{9}
 
